@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#1F4E5F">
+  <meta name="author" content="Jesus Ging">
+  <title>Fundación Raziel - Registro de Campo</title>
+  <link rel="manifest" href="manifest.json">
+  <!-- Librería SheetJS con soporte de estilos ejecutivos para Excel (.xlsx) -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
+  <style>
+    :root {
+      --primary: #1F4E5F;
+      --primary-dark: #143642;
+      --primary-light: #2E6F7E;
+      --accent: #D9E8EC;
+      --bg: #F1F5F9;
+      --card: #FFFFFF;
+      --text: #0F172A;
+      --muted: #475569;
+      --border: #CBD5E1;
+      --success: #15803D;
+      --warning: #B45309;
+      --danger: #B91C1C;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      padding-bottom: 70px;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+      color: #FFFFFF;
+      padding: 14px 16px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-header {
+      width: 44px;
+      height: 44px;
+      object-fit: contain;
+      background: #FFFFFF;
+      border-radius: 10px;
+      padding: 3px;
+      flex-shrink: 0;
+    }
+
+    .header-titles h1 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .header-titles p {
+      font-size: 0.78rem;
+      opacity: 0.88;
+    }
+
+    .badge {
+      background: rgba(255, 255, 255, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 5px 11px;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 14px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 18px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
+      margin-bottom: 16px;
+      border: 1px solid #E2E8F0;
+    }
+
+    .section-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 12px;
+      padding-bottom: 6px;
+      border-bottom: 2px solid var(--accent);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .edit-banner {
+      background: #FEF3C7;
+      border: 1px solid #F59E0B;
+      color: #92400E;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      margin-bottom: 14px;
+      display: none;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .edit-banner.active {
+      display: flex;
+    }
+
+    .form-group {
+      margin-bottom: 13px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.86rem;
+      font-weight: 600;
+      margin-bottom: 5px;
+      color: var(--text);
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 11px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.96rem;
+      background: #FFFFFF;
+      color: var(--text);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 70px;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 3px rgba(46, 111, 126, 0.15);
+    }
+
+    .row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .cedula-group {
+      display: grid;
+      grid-template-columns: 78px 1fr;
+      gap: 8px;
+    }
+
+    .address-box {
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      padding: 12px;
+      border-radius: 8px;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 13px;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.98rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      transition: opacity 0.2s;
+    }
+
+    .btn:active {
+      opacity: 0.85;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: #FFFFFF;
+      margin-top: 6px;
+    }
+
+    .btn-update {
+      background-color: var(--warning);
+      color: #FFFFFF;
+      margin-top: 6px;
+    }
+
+    .btn-cancel-edit {
+      background: #FFFFFF;
+      color: #92400E;
+      border: 1px solid #F59E0B;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+
+    .btn-excel {
+      background-color: var(--success);
+      color: #FFFFFF;
+      margin-bottom: 10px;
+    }
+
+    .btn-danger {
+      background-color: transparent;
+      color: var(--danger);
+      border: 1px solid var(--danger);
+      padding: 10px;
+      font-size: 0.88rem;
+    }
+
+    .search-box {
+      margin-bottom: 12px;
+      position: relative;
+    }
+
+    .search-box input {
+      background-color: #F8FAFC;
+      border: 1.5px solid var(--primary-light);
+      padding-left: 14px;
+    }
+
+    .record-item {
+      border-bottom: 1px solid #E2E8F0;
+      padding: 12px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .record-item:last-child {
+      border-bottom: none;
+    }
+
+    .record-info {
+      flex: 1;
+    }
+
+    .record-info strong {
+      display: block;
+      font-size: 0.98rem;
+      color: var(--primary-dark);
+    }
+
+    .record-meta {
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.45;
+      margin-top: 3px;
+    }
+
+    .record-timestamps {
+      font-size: 0.76rem;
+      color: #64748B;
+      margin-top: 5px;
+      background: #F8FAFC;
+      padding: 4px 8px;
+      border-radius: 6px;
+      display: inline-block;
+    }
+
+    .edited-tag {
+      color: var(--warning);
+      font-weight: 600;
+    }
+
+    .record-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .btn-edit-item {
+      background: #E0F2FE;
+      color: #0369A1;
+      border: none;
+      border-radius: 6px;
+      padding: 7px 11px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-delete-item {
+      background: #FEE2E2;
+      color: var(--danger);
+      border: none;
+      border-radius: 6px;
+      padding: 7px 11px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .empty-state {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.9rem;
+      padding: 20px 0;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 58px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #0F172A;
+      color: #FFFFFF;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      z-index: 100;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .toast.show {
+      opacity: 1;
+    }
+
+    /* Marca de agua inalterable al pie de página */
+    #dev-watermark-footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: #0F172A;
+      color: #E2E8F0;
+      text-align: center;
+      padding: 9px 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      border-top: 2px solid var(--primary-light);
+      z-index: 9999;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-brand">
+      <img src="./logo.png" alt="Logo Fundación Raziel" class="logo-header" onerror="this.style.display='none'">
+      <div class="header-titles">
+        <h1>Fundación Raziel</h1>
+        <p>Sistema de Registro Offline</p>
+      </div>
+    </div>
+    <span class="badge" id="contadorBadge">0 registros</span>
+  </header>
+
+  <div class="container">
+
+    <!-- SECCIÓN 1: Datos del Responsable y Ubicación de la Jornada -->
+    <div class="card">
+      <div class="section-title">
+        <span>1. Datos de la Jornada y Responsable</span>
+      </div>
+      <div class="form-group">
+        <label for="operadorNombre">Responsable del Rellenado (Nombre y Cargo) *</label>
+        <input type="text" id="operadorNombre" placeholder="Ej. María Rodríguez - Coordinadora">
+      </div>
+      <div class="row-2">
+        <div class="form-group">
+          <label for="jornadaSitio">Sitio / Lugar de Atención *</label>
+          <input type="text" id="jornadaSitio" placeholder="Ej. Plaza 19 de Abril / Ambulatorio">
+        </div>
+        <div class="form-group">
+          <label for="jornadaSector">Sector / Comunidad *</label>
+          <input type="text" id="jornadaSector" placeholder="Ej. Araira / Casco Central">
+        </div>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 2: Formulario Principal de Registro (Orden exacto) -->
+    <div class="card" id="formCard">
+      <div class="section-title">
+        <span id="formTitle">2. Registro de Beneficiario / Paciente</span>
+      </div>
+
+      <div class="edit-banner" id="editBanner">
+        <span>Editando registro seleccionado</span>
+        <button type="button" class="btn-cancel-edit" id="btnCancelarEdicion">Cancelar</button>
+      </div>
+
+      <form id="registroForm">
+        <!-- 1. Nombres -->
+        <div class="form-group">
+          <label for="nombres">1. Nombres *</label>
+          <input type="text" id="nombres" placeholder="Ej. Carlos Alberto" required>
+        </div>
+
+        <!-- 2. Apellidos -->
+        <div class="form-group">
+          <label for="apellidos">2. Apellidos *</label>
+          <input type="text" id="apellidos" placeholder="Ej. Pérez Gómez" required>
+        </div>
+
+        <!-- 3. Cédula de Identidad -->
+        <div class="form-group">
+          <label for="cedula">3. Cédula de Identidad *</label>
+          <div class="cedula-group">
+            <select id="nacionalidad">
+              <option value="V-">V-</option>
+              <option value="E-">E-</option>
+            </select>
+            <input type="number" id="cedula" placeholder="Ej. 18456789" inputmode="numeric" required>
+          </div>
+        </div>
+
+        <!-- 4. Edad y 5. Sexo -->
+        <div class="row-2">
+          <div class="form-group">
+            <label for="edad">4. Edad *</label>
+            <input type="number" id="edad" min="0" max="120" placeholder="Ej. 34" inputmode="numeric" required>
+          </div>
+
+          <div class="form-group">
+            <label for="sexo">5. Sexo *</label>
+            <select id="sexo" required>
+              <option value="">Seleccione...</option>
+              <option value="Femenino">Femenino</option>
+              <option value="Masculino">Masculino</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 6. Teléfono -->
+        <div class="form-group">
+          <label for="telefono">6. Teléfono *</label>
+          <input type="tel" id="telefono" placeholder="Ej. 04141234567" inputmode="tel" required>
+        </div>
+
+        <!-- 7. Dirección (Venezuela: Estado, Municipio y Detalles) -->
+        <div class="form-group">
+          <label>7. Dirección de Habitación *</label>
+          <div class="address-box">
+            <div class="row-2">
+              <div class="form-group">
+                <label for="dirEstado">Estado (Venezuela) *</label>
+                <select id="dirEstado" required>
+                  <option value="">Seleccione estado...</option>
+                  <option value="Miranda" selected>Miranda</option>
+                  <option value="Distrito Capital">Distrito Capital</option>
+                  <option value="La Guaira">La Guaira</option>
+                  <option value="Aragua">Aragua</option>
+                  <option value="Carabobo">Carabobo</option>
+                  <option value="Anzoátegui">Anzoátegui</option>
+                  <option value="Apure">Apure</option>
+                  <option value="Barinas">Barinas</option>
+                  <option value="Bolívar">Bolívar</option>
+                  <option value="Cojedes">Cojedes</option>
+                  <option value="Delta Amacuro">Delta Amacuro</option>
+                  <option value="Falcón">Falcón</option>
+                  <option value="Guárico">Guárico</option>
+                  <option value="Lara">Lara</option>
+                  <option value="Mérida">Mérida</option>
+                  <option value="Monagas">Monagas</option>
+                  <option value="Nueva Esparta">Nueva Esparta</option>
+                  <option value="Portuguesa">Portuguesa</option>
+                  <option value="Sucre">Sucre</option>
+                  <option value="Táchira">Táchira</option>
+                  <option value="Trujillo">Trujillo</option>
+                  <option value="Yaracuy">Yaracuy</option>
+                  <option value="Zulia">Zulia</option>
+                  <option value="Amazonas">Amazonas</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="dirMunicipio">Municipio *</label>
+                <input type="text" id="dirMunicipio" list="listaMunicipios" value="Zamora" placeholder="Ej. Zamora" required>
+                <datalist id="listaMunicipios">
+                  <option value="Zamora">
+                  <option value="Plaza">
+                  <option value="Sucre">
+                  <option value="Acevedo">
+                  <option value="Brión">
+                  <option value="Chacao">
+                  <option value="Baruta">
+                  <option value="El Hatillo">
+                  <option value="Libertador">
+                </datalist>
+              </div>
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="dirDetalle">Parroquia / Sector / Calle / Casa *</label>
+              <input type="text" id="dirDetalle" placeholder="Ej. Parroquia Bolívar, Urb. Arnaldo Arocha, Calle 2" required>
+            </div>
+          </div>
+        </div>
+
+        <!-- 8. Profesión -->
+        <div class="form-group">
+          <label for="profesion">8. Profesión / Ocupación *</label>
+          <input type="text" id="profesion" placeholder="Ej. Docente, Comerciante, Estudiante, Hogar" required>
+        </div>
+
+        <!-- 9. Área / Especialidad donde fue atendido -->
+        <div class="form-group">
+          <label for="especialidad">9. Área / Especialidad donde fue atendido *</label>
+          <input type="text" id="especialidad" list="listaEspecialidades" placeholder="Seleccione o escriba especialidad..." required>
+          <datalist id="listaEspecialidades">
+            <option value="Medicina General">
+            <option value="Pediatría">
+            <option value="Ginecología / Obstetricia">
+            <option value="Cardiología">
+            <option value="Odontología">
+            <option value="Oftalmología">
+            <option value="Traumatología">
+            <option value="Entrega de Medicamentos / Farmacia">
+            <option value="Vacunación">
+            <option value="Atención Social">
+          </datalist>
+        </div>
+
+        <!-- 10. Detalles -->
+        <div class="form-group">
+          <label for="detalles">10. Detalles / Diagnóstico / Observación *</label>
+          <textarea id="detalles" placeholder="Describa síntomas, diagnóstico o motivo de atención..." required></textarea>
+        </div>
+
+        <!-- 11. Procedimiento -->
+        <div class="form-group">
+          <label for="procedimiento">11. Procedimiento Realizado / Entrega *</label>
+          <textarea id="procedimiento" placeholder="Ej. Evaluación médica, toma de tensión, entrega de tratamiento..." required></textarea>
+        </div>
+
+        <button type="submit" id="btnGuardar" class="btn btn-primary">Guardar Registro</button>
+      </form>
+    </div>
+
+    <!-- SECCIÓN 3: Exportación Ejecutiva -->
+    <div class="card">
+      <div class="section-title">
+        <span>3. Exportar Reporte Ejecutivo</span>
+      </div>
+      <button type="button" id="btnExportar" class="btn btn-excel">
+        Descargar Excel Ejecutivo (.xlsx)
+      </button>
+      <button type="button" id="btnLimpiar" class="btn btn-danger">
+        Vaciar base de datos local
+      </button>
+    </div>
+
+    <!-- SECCIÓN 4: Buscador y Listado de Registros -->
+    <div class="card">
+      <div class="section-title">
+        <span>4. Registros Guardados</span>
+      </div>
+      <div class="search-box">
+        <input type="search" id="buscadorInput" placeholder="Buscar por nombre, apellido, cédula, especialidad o sector...">
+      </div>
+      <div id="listaRegistros"></div>
+    </div>
+
+  </div>
+
+  <div id="toast" class="toast">Acción completada</div>
+
+  <!-- Marca de agua inalterable -->
+  <footer id="dev-watermark-footer">Desarrollado por Jesus Ging</footer>
+
+  <script>
+    const STORAGE_KEY = 'fundacion_raziel_registros_v1';
+    const CONFIG_KEY = 'fundacion_raziel_jornada_v1';
+
+    let registros = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    let editandoId = null;
+
+    // Elementos del DOM
+    const form = document.getElementById('registroForm');
+    const listaEl = document.getElementById('listaRegistros');
+    const contadorBadge = document.getElementById('contadorBadge');
+    const toastEl = document.getElementById('toast');
+    const buscadorInput = document.getElementById('buscadorInput');
+    const editBanner = document.getElementById('editBanner');
+    const btnGuardar = document.getElementById('btnGuardar');
+    const formTitle = document.getElementById('formTitle');
+
+    // Campos de cabecera de jornada (persistentes)
+    const operadorInput = document.getElementById('operadorNombre');
+    const sitioInput = document.getElementById('jornadaSitio');
+    const sectorInput = document.getElementById('jornadaSector');
+
+    function cargarConfigJornada() {
+      const cfg = JSON.parse(localStorage.getItem(CONFIG_KEY)) || {};
+      if (cfg.operador) operadorInput.value = cfg.operador;
+      if (cfg.sitio) sitioInput.value = cfg.sitio;
+      if (cfg.sector) sectorInput.value = cfg.sector;
+    }
+
+    function guardarConfigJornada() {
+      localStorage.setItem(CONFIG_KEY, JSON.stringify({
+        operador: operadorInput.value.trim(),
+        sitio: sitioInput.value.trim(),
+        sector: sectorInput.value.trim()
+      }));
+    }
+
+    [operadorInput, sitioInput, sectorInput].forEach(el => {
+      el.addEventListener('input', guardarConfigJornada);
+    });
+
+    function obtenerFechaHoraActual() {
+      const ahora = new Date();
+      const fecha = ahora.toLocaleDateString('es-VE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+      const hora = ahora.toLocaleTimeString('es-VE', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+      return `${fecha} ${hora}`;
+    }
+
+    function mostrarMensaje(texto) {
+      toastEl.textContent = texto;
+      toastEl.classList.add('show');
+      setTimeout(() => toastEl.classList.remove('show'), 2600);
+    }
+
+    function guardarEnMemoria() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(registros));
+      renderizarLista(buscadorInput.value);
+    }
+
+    function renderizarLista(filtro = '') {
+      contadorBadge.textContent = `${registros.length} ${registros.length === 1 ? 'registro' : 'registros'}`;
+
+      const termino = filtro.toLowerCase().trim();
+      const filtrados = registros.filter(r => {
+        if (!termino) return true;
+        return (
+          r.nombres.toLowerCase().includes(termino) ||
+          r.apellidos.toLowerCase().includes(termino) ||
+          r.cedula.toLowerCase().includes(termino) ||
+          r.especialidad.toLowerCase().includes(termino) ||
+          r.dirDetalle.toLowerCase().includes(termino) ||
+          r.dirMunicipio.toLowerCase().includes(termino)
+        );
+      });
+
+      if (filtrados.length === 0) {
+        listaEl.innerHTML = `<div class="empty-state">${termino ? 'No se encontraron coincidencias para tu búsqueda.' : 'Aún no hay registros guardados en este dispositivo.'}</div>`;
+        return;
+      }
+
+      const ordenados = [...filtrados].reverse();
+      listaEl.innerHTML = ordenados.map((reg) => `
+        <div class="record-item">
+          <div class="record-info">
+            <strong>${reg.nombres} ${reg.apellidos}</strong>
+            <div class="record-meta">
+              <b>CI:</b> ${reg.cedula} | <b>Edad:</b> ${reg.edad} | <b>Sexo:</b> ${reg.sexo}<br>
+              <b>Tel:</b> ${reg.telefono} | <b>Prof:</b> ${reg.profesion}<br>
+              <b>Dirección:</b> ${reg.dirEstado}, Mcpio. ${reg.dirMunicipio}, ${reg.dirDetalle}<br>
+              <b>Área:</b> ${reg.especialidad}<br>
+              <b>Detalles:</b> ${reg.detalles}<br>
+              <b>Procedimiento:</b> ${reg.procedimiento}
+            </div>
+            <div class="record-timestamps">
+              Registrado: ${reg.creadoEl}
+              ${reg.editadoEl ? `<br><span class="edited-tag">Editado: ${reg.editadoEl}</span>` : ''}
+            </div>
+          </div>
+          <div class="record-actions">
+            <button type="button" class="btn-edit-item" onclick="iniciarEdicion(${reg.id})">Editar</button>
+            <button type="button" class="btn-delete-item" onclick="eliminarRegistro(${reg.id})">Borrar</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    buscadorInput.addEventListener('input', (e) => {
+      renderizarLista(e.target.value);
+    });
+
+    window.iniciarEdicion = function(id) {
+      const reg = registros.find(r => r.id === id);
+      if (!reg) return;
+
+      editandoId = id;
+      const partesCedula = reg.cedula.split('-');
+      document.getElementById('nacionalidad').value = (partesCedula[0] || 'V') + '-';
+      document.getElementById('cedula').value = partesCedula[1] || '';
+
+      document.getElementById('nombres').value = reg.nombres;
+      document.getElementById('apellidos').value = reg.apellidos;
+      document.getElementById('edad').value = reg.edad;
+      document.getElementById('sexo').value = reg.sexo;
+      document.getElementById('telefono').value = reg.telefono;
+      document.getElementById('dirEstado').value = reg.dirEstado;
+      document.getElementById('dirMunicipio').value = reg.dirMunicipio;
+      document.getElementById('dirDetalle').value = reg.dirDetalle;
+      document.getElementById('profesion').value = reg.profesion;
+      document.getElementById('especialidad').value = reg.especialidad;
+      document.getElementById('detalles').value = reg.detalles;
+      document.getElementById('procedimiento').value = reg.procedimiento;
+
+      editBanner.classList.add('active');
+      formTitle.textContent = '2. Editando Registro';
+      btnGuardar.textContent = 'Actualizar Registro';
+      btnGuardar.className = 'btn btn-update';
+
+      document.getElementById('formCard').scrollIntoView({ behavior: 'smooth' });
+    };
+
+    function cancelarEdicion() {
+      editandoId = null;
+      form.reset();
+      document.getElementById('dirEstado').value = 'Miranda';
+      document.getElementById('dirMunicipio').value = 'Zamora';
+      editBanner.classList.remove('active');
+      formTitle.textContent = '2. Registro de Beneficiario / Paciente';
+      btnGuardar.textContent = 'Guardar Registro';
+      btnGuardar.className = 'btn btn-primary';
+    }
+
+    document.getElementById('btnCancelarEdicion').addEventListener('click', cancelarEdicion);
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const operador = operadorInput.value.trim();
+      const sitio = sitioInput.value.trim();
+      const sector = sectorInput.value.trim();
+
+      if (!operador || !sitio || !sector) {
+        alert('Por favor completa primero la Sección 1 (Responsable, Sitio y Sector de la jornada).');
+        operadorInput.focus();
+        return;
+      }
+
+      const cedulaCompleta = document.getElementById('nacionalidad').value + document.getElementById('cedula').value.trim();
+      const timestampAhora = obtenerFechaHoraActual();
+
+      if (editandoId !== null) {
+        // Actualizar registro existente conservando fecha original
+        const idx = registros.findIndex(r => r.id === editandoId);
+        if (idx !== -1) {
+          registros[idx] = {
+            ...registros[idx],
+            nombres: document.getElementById('nombres').value.trim(),
+            apellidos: document.getElementById('apellidos').value.trim(),
+            cedula: cedulaCompleta,
+            edad: Number(document.getElementById('edad').value),
+            sexo: document.getElementById('sexo').value,
+            telefono: document.getElementById('telefono').value.trim(),
+            dirEstado: document.getElementById('dirEstado').value,
+            dirMunicipio: document.getElementById('dirMunicipio').value.trim(),
+            dirDetalle: document.getElementById('dirDetalle').value.trim(),
+            profesion: document.getElementById('profesion').value.trim(),
+            especialidad: document.getElementById('especialidad').value.trim(),
+            detalles: document.getElementById('detalles').value.trim(),
+            procedimiento: document.getElementById('procedimiento').value.trim(),
+            editadoEl: timestampAhora,
+            editadoPor: operador
+          };
+        }
+        guardarEnMemoria();
+        cancelarEdicion();
+        mostrarMensaje('Registro actualizado correctamente');
+        return;
+      }
+
+      // Verificar duplicado de cédula en registros nuevos
+      const existe = registros.some(r => r.cedula === cedulaCompleta);
+      if (existe) {
+        if (!confirm(`La cédula ${cedulaCompleta} ya existe en la lista. ¿Deseas guardarla nuevamente?`)) {
+          return;
+        }
+      }
+
+      const nuevoRegistro = {
+        id: Date.now(),
+        nombres: document.getElementById('nombres').value.trim(),
+        apellidos: document.getElementById('apellidos').value.trim(),
+        cedula: cedulaCompleta,
+        edad: Number(document.getElementById('edad').value),
+        sexo: document.getElementById('sexo').value,
+        telefono: document.getElementById('telefono').value.trim(),
+        dirEstado: document.getElementById('dirEstado').value,
+        dirMunicipio: document.getElementById('dirMunicipio').value.trim(),
+        dirDetalle: document.getElementById('dirDetalle').value.trim(),
+        profesion: document.getElementById('profesion').value.trim(),
+        especialidad: document.getElementById('especialidad').value.trim(),
+        detalles: document.getElementById('detalles').value.trim(),
+        procedimiento: document.getElementById('procedimiento').value.trim(),
+        creadoEl: timestampAhora,
+        editadoEl: '',
+        operador: operador,
+        sitioJornada: sitio,
+        sectorJornada: sector
+      };
+
+      registros.push(nuevoRegistro);
+      guardarEnMemoria();
+      form.reset();
+      document.getElementById('dirEstado').value = 'Miranda';
+      document.getElementById('dirMunicipio').value = 'Zamora';
+      document.getElementById('nombres').focus();
+      mostrarMensaje('Registro guardado offline');
+    });
+
+    window.eliminarRegistro = function(id) {
+      if (confirm('¿Seguro que deseas eliminar este registro?')) {
+        if (editandoId === id) cancelarEdicion();
+        registros = registros.filter(r => r.id !== id);
+        guardarEnMemoria();
+        mostrarMensaje('Registro eliminado');
+      }
+    };
+
+    document.getElementById('btnLimpiar').addEventListener('click', () => {
+      if (registros.length === 0) return;
+      if (confirm('¿Deseas vaciar TODOS los registros guardados? Asegúrate de haber descargado el Excel primero.')) {
+        registros = [];
+        cancelarEdicion();
+        guardarEnMemoria();
+        mostrarMensaje('Base de datos vaciada');
+      }
+    });
+
+    // Exportación a Excel (.xlsx) estilo ejecutivo con marca de agua de desarrollador
+    document.getElementById('btnExportar').addEventListener('click', () => {
+      if (registros.length === 0) {
+        alert('No hay registros para exportar.');
+        return;
+      }
+
+      if (typeof XLSX === 'undefined') {
+        alert('La librería Excel no cargó. Abre la app una vez con internet para guardarla offline.');
+        return;
+      }
+
+      const operador = operadorInput.value.trim() || 'No especificado';
+      const sitio = sitioInput.value.trim() || 'No especificado';
+      const sector = sectorInput.value.trim() || 'No especificado';
+      const fechaEmision = obtenerFechaHoraActual();
+
+      // Estilos ejecutivos
+      const estiloTitulo = {
+        font: { name: 'Calibri', sz: 15, bold: true, color: { rgb: 'FFFFFF' } },
+        fill: { fgColor: { rgb: '1F4E5F' } },
+        alignment: { horizontal: 'left', vertical: 'center' }
+      };
+
+      const estiloSubtitulo = {
+        font: { name: 'Calibri', sz: 10, bold: true, color: { rgb: '1F4E5F' } },
+        fill: { fgColor: { rgb: 'D9E8EC' } },
+        alignment: { horizontal: 'left', vertical: 'center' }
+      };
+
+      const estiloMarcaAgua = {
+        font: { name: 'Calibri', sz: 10, italic: true, bold: true, color: { rgb: '475569' } },
+        fill: { fgColor: { rgb: 'F1F5F9' } },
+        alignment: { horizontal: 'right', vertical: 'center' }
+      };
+
+      const estiloEncabezadoTabla = {
+        font: { name: 'Calibri', sz: 11, bold: true, color: { rgb: 'FFFFFF' } },
+        fill: { fgColor: { rgb: '2E6F7E' } },
+        alignment: { horizontal: 'center', vertical: 'center', wrapText: true },
+        border: {
+          top: { style: 'thin', color: { rgb: '1F4E5F' } },
+          bottom: { style: 'medium', color: { rgb: '1F4E5F' } },
+          left: { style: 'thin', color: { rgb: '1F4E5F' } },
+          right: { style: 'thin', color: { rgb: '1F4E5F' } }
+        }
+      };
+
+      const bordeCelda = {
+        top: { style: 'thin', color: { rgb: 'CBD5E1' } },
+        bottom: { style: 'thin', color: { rgb: 'CBD5E1' } },
+        left: { style: 'thin', color: { rgb: 'CBD5E1' } },
+        right: { style: 'thin', color: { rgb: 'CBD5E1' } }
+      };
+
+      const encabezados = [
+        'N°',
+        'Nombres',
+        'Apellidos',
+        'Cédula de Identidad',
+        'Edad',
+        'Sexo',
+        'Teléfono',
+        'Estado',
+        'Municipio',
+        'Dirección (Detalles)',
+        'Profesión',
+        'Área / Especialidad',
+        'Detalles / Diagnóstico',
+        'Procedimiento',
+        'Fecha y Hora Registro',
+        'Última Edición',
+        'Responsable Rellenado',
+        'Sitio / Sector Jornada'
+      ];
+
+      // Construcción de matriz de filas
+      const filas = [
+        [{ v: 'FUNDACIÓN RAZIEL — REPORTE EJECUTIVO DE REGISTRO EN CAMPO', s: estiloTitulo }],
+        [{ v: `Sitio: ${sitio} | Sector: ${sector} | Responsable Principal: ${operador}`, s: estiloSubtitulo }],
+        [{ v: `Fecha de Emisión: ${fechaEmision} | Total Registros: ${registros.length}`, s: estiloSubtitulo }],
+        [{ v: 'Marca de Agua de Desarrollador: Desarrollado por Jesus Ging', s: estiloMarcaAgua }],
+        [], // Fila separadora
+        encabezados.map(h => ({ v: h, s: estiloEncabezadoTabla }))
+      ];
+
+      registros.forEach((r, idx) => {
+        const esPar = idx % 2 === 1;
+        const estiloFila = {
+          font: { name: 'Calibri', sz: 10, color: { rgb: '0F172A' } },
+          fill: { fgColor: { rgb: esPar ? 'F8FAFC' : 'FFFFFF' } },
+          alignment: { vertical: 'center', wrapText: true },
+          border: bordeCelda
+        };
+        const estiloCentrado = {
+          ...estiloFila,
+          alignment: { horizontal: 'center', vertical: 'center', wrapText: true }
+        };
+
+        filas.push([
+          { v: idx + 1, s: estiloCentrado },
+          { v: r.nombres, s: estiloFila },
+          { v: r.apellidos, s: estiloFila },
+          { v: r.cedula, s: estiloCentrado },
+          { v: r.edad, s: estiloCentrado },
+          { v: r.sexo, s: estiloCentrado },
+          { v: r.telefono, s: estiloCentrado },
+          { v: r.dirEstado, s: estiloFila },
+          { v: r.dirMunicipio, s: estiloFila },
+          { v: r.dirDetalle, s: estiloFila },
+          { v: r.profesion, s: estiloFila },
+          { v: r.especialidad, s: estiloFila },
+          { v: r.detalles, s: estiloFila },
+          { v: r.procedimiento, s: estiloFila },
+          { v: r.creadoEl, s: estiloCentrado },
+          { v: r.editadoEl || 'Sin editar', s: estiloCentrado },
+          { v: r.operador || operador, s: estiloFila },
+          { v: `${r.sitioJornada || sitio} - ${r.sectorJornada || sector}`, s: estiloFila }
+        ]);
+      });
+
+      // Fila final de cierre con marca de agua de desarrollador
+      filas.push([]);
+      filas.push([{
+        v: 'Documento generado automáticamente — Desarrollado por Jesus Ging',
+        s: estiloMarcaAgua
+      }]);
+
+      const hoja = XLSX.utils.aoa_to_sheet(filas);
+
+      // Combinar celdas del bloque ejecutivo superior y pie
+      const ultimaCol = encabezados.length - 1;
+      const filaPie = filas.length - 1;
+      hoja['!merges'] = [
+        { s: { r: 0, c: 0 }, e: { r: 0, c: ultimaCol } },
+        { s: { r: 1, c: 0 }, e: { r: 1, c: ultimaCol } },
+        { s: { r: 2, c: 0 }, e: { r: 2, c: ultimaCol } },
+        { s: { r: 3, c: 0 }, e: { r: 3, c: ultimaCol } },
+        { s: { r: filaPie, c: 0 }, e: { r: filaPie, c: ultimaCol } }
+      ];
+
+      // Ancho de columnas optimizado
+      hoja['!cols'] = [
+        { wch: 6 },  // N°
+        { wch: 20 }, // Nombres
+        { wch: 20 }, // Apellidos
+        { wch: 16 }, // Cédula
+        { wch: 8 },  // Edad
+        { wch: 12 }, // Sexo
+        { wch: 16 }, // Teléfono
+        { wch: 16 }, // Estado
+        { wch: 16 }, // Municipio
+        { wch: 28 }, // Dirección
+        { wch: 18 }, // Profesión
+        { wch: 22 }, // Especialidad
+        { wch: 28 }, // Detalles
+        { wch: 28 }, // Procedimiento
+        { wch: 21 }, // Fecha Registro
+        { wch: 21 }, // Última Edición
+        { wch: 22 }, // Responsable
+        { wch: 24 }  // Sitio/Sector
+      ];
+
+      // Alto de filas de encabezado
+      hoja['!rows'] = [
+        { hpt: 28 },
+        { hpt: 20 },
+        { hpt: 20 },
+        { hpt: 20 },
+        { hpt: 10 },
+        { hpt: 26 }
+      ];
+
+      // Autofiltro en la tabla para fácil manipulación ejecutiva
+      hoja['!autofilter'] = {
+        ref: XLSX.utils.encode_range({
+          s: { r: 5, c: 0 },
+          e: { r: 5 + registros.length, c: ultimaCol }
+        })
+      };
+
+      // Encabezado y pie de página de impresión con marca de agua
+      hoja['!headerFooter'] = {
+        oddHeader: '&CFundación Raziel - Reporte Ejecutivo',
+        oddFooter: '&LDesarrollado por Jesus Ging&RPágina &P de &N'
+      };
+
+      const libro = XLSX.utils.book_new();
+      libro.Props = {
+        Title: 'Reporte Ejecutivo - Fundación Raziel',
+        Subject: 'Registro de Atención en Campo',
+        Author: 'Jesus Ging',
+        Company: 'Fundación Raziel',
+        CreatedDate: new Date()
+      };
+
+      XLSX.utils.book_append_sheet(libro, hoja, 'Registros Raziel');
+
+      const fechaArchivo = new Date().toISOString().slice(0, 10);
+      XLSX.writeFile(libro, `Fundacion_Raziel_Reporte_${fechaArchivo}.xlsx`);
+      mostrarMensaje('Excel ejecutivo descargado');
+    });
+
+    // Protección de integridad para la marca de agua en pantalla
+    (function protegerMarcaDeAgua() {
+      const textoOficial = 'Desarrollado por Jesus Ging';
+      const asegurarFooter = () => {
+        let footer = document.getElementById('dev-watermark-footer');
+        if (!footer) {
+          footer = document.createElement('footer');
+          footer.id = 'dev-watermark-footer';
+          document.body.appendChild(footer);
+        }
+        if (footer.textContent !== textoOficial) {
+          footer.textContent = textoOficial;
+        }
+        footer.style.display = 'block';
+        footer.style.visibility = 'visible';
+        footer.style.opacity = '1';
+      };
+
+      asegurarFooter();
+      const observer = new MutationObserver(asegurarFooter);
+      observer.observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true });
+    })();
+
+    // Registrar Service Worker para modo 100% offline
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .catch(err => console.log('Error SW:', err));
+      });
+    }
+
+    cargarConfigJornada();
+    renderizarLista();
+  </script>
+</body>
+</html>
